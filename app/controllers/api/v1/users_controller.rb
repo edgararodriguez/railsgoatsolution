@@ -7,7 +7,7 @@ class Api::V1::UsersController < ApplicationController
   respond_to :json
 
   def index
-    respond_with @user.admin ? User.all : @user
+    respond_with @user.admin ? User.all.as_json : @user.as_json
   end
 
   def show
@@ -46,7 +46,9 @@ class Api::V1::UsersController < ApplicationController
   def unescape_token(token = "")
     @clean_token = CGI::unescape(token)
   end
-
+  def as_json
+    super(only: [:id, :email, :first_name, :last_name])
+  end
   # Added a method to make it easy to figure out who the user is.
   def extrapolate_user
     @user = User.find_by_id(@clean_token.split("-").first)
